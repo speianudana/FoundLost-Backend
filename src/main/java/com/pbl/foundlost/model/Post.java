@@ -72,6 +72,6 @@ public class Post {
     String details;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "id", columnDefinition = "int")
+    @JoinColumn(name = "author_id")
     private User user;
 }

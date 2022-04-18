@@ -65,7 +65,7 @@ public class User {
 
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "id", columnDefinition = "int", insertable = false, updatable = false)
+    @JoinColumn(name = "role_id", insertable = false, updatable = false)
     private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
