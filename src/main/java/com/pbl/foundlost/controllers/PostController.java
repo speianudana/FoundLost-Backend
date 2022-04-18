@@ -1,11 +1,12 @@
-package com.example.foundlost.controllers;
+package com.pbl.foundlost.controllers;
 
-import com.example.foundlost.model.Post;
-import com.example.foundlost.model.User;
-import com.example.foundlost.payload.request.PostRequest;
-import com.example.foundlost.repository.PostRepository;
-import com.example.foundlost.repository.UserRepository;
-import com.example.foundlost.services.AmazonClient;
+import com.pbl.foundlost.model.Post;
+import com.pbl.foundlost.model.User;
+import com.pbl.foundlost.payload.request.PostRequest;
+import com.pbl.foundlost.payload.response.MessageResponse;
+import com.pbl.foundlost.repository.PostRepository;
+import com.pbl.foundlost.repository.UserRepository;
+import com.pbl.foundlost.services.AmazonClient;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,26 +48,28 @@ public class PostController {
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
         try {
-            String filePath = this.amazonClient.uploadFile(postRequest.getPetImage(), amazonClient.getAnimalPhotoBucket());
-            post.setPetImage(filePath);
+            String filePath = this.amazonClient.uploadFile(postRequest.getImage(), amazonClient.getAnimalPhotoBucket());
+            post.setImage(filePath);
             post.setStatus(postRequest.getStatus());
-            post.setSpecies(postRequest.getSpecies());
-            post.setSterilization(postRequest.getSterilization());
-            post.setFurColor(postRequest.getFurColor());
+            post.setType(postRequest.getType());
             post.setAddress(postRequest.getAddress());
-            post.setAge(postRequest.getAge());
             post.setCreatedDate(new Date());
-            post.setBreed(postRequest.getBreed());
             post.setContacts(postRequest.getContacts());
-            post.setEyeColor(postRequest.getEyeColor());
-            post.setGender(postRequest.getGender());
             post.setUser(user);
-            post.setSpecialSigns(postRequest.getSpecialSigns());
             post.setReward(postRequest.getReward());
             post.setDetails(postRequest.getDetails());
+            post.setAge(postRequest.getAge());
+            post.setBreed(postRequest.getBreed());
+            post.setEyeColor(postRequest.getEyeColor());
+            post.setFurColor(postRequest.getFurColor());
+            post.setGender(postRequest.getGender());
+            post.setSpecialSigns(postRequest.getSpecialSigns());
+            post.setName(postRequest.getName());
+            post.setNationality(postRequest.getNationality());
+            post.setSpecies(postRequest.getSpecies());
             postRepo.save(post);
             List<Post> list = postRepo.findAll();
-            Post lastPost = list.get(list.size()-1);
+            Post lastPost = list.get(list.size() - 1);
 //            RecommenderSystemController.authenticateRecommenderSystem();
 //            RecommenderSystemController.sendCreatedPostToRecommenderSystem(lastPost, postRequest.getPetImage());
             return ResponseEntity.ok(new MessageResponse("Post created successfully!"));
@@ -112,7 +116,7 @@ public class PostController {
 //            similarPosts.add(post);}
 //        }
         List<Post> posts = postRepo.findAll();
-        posts = posts.subList(posts.size()-5, posts.size()-1);
+        posts = posts.subList(posts.size() - 5, posts.size() - 1);
 //        return similarPosts;
         return posts;
     }
@@ -160,31 +164,30 @@ public class PostController {
             Optional<Post> optionalPost = postRepo.findById(postRequest.getId());
             if (optionalPost.isPresent()) {
                 Post post = optionalPost.get();
-                System.out.println(user.getId());
-                System.out.println(postRequest.getAuthorId());
+                System.out.println("User id" + user.getId());
+                System.out.println("Author" + postRequest.getAuthorId());
                 if (user.getId().equals(postRequest.getAuthorId()) || isAdmin(user)) {
-                    System.out.println(postRequest.getPetImage());
-                    if (postRequest.getPetImage() != null) {
-                        String filePath = this.amazonClient.uploadFile(postRequest.getPetImage(), amazonClient.getAnimalPhotoBucket());
-                        post.setPetImage(filePath);
+                    System.out.println(postRequest.getImage());
+                    if (postRequest.getImage() != null) {
+                        String filePath = this.amazonClient.uploadFile(postRequest.getImage(), amazonClient.getAnimalPhotoBucket());
+                        post.setImage(filePath);
                     }
                     post.setStatus(postRequest.getStatus());
-                    post.setSpecies(postRequest.getSpecies());
-                    post.setSterilization(postRequest.getSterilization());
-                    post.setFurColor(postRequest.getFurColor());
+                    post.setType(postRequest.getType());
                     post.setAddress(postRequest.getAddress());
                     post.setContacts(postRequest.getContacts());
-                    post.setGender(postRequest.getGender());
+                    post.setReward(postRequest.getReward());
+                    post.setDetails(postRequest.getDetails());
+                    post.setAge(postRequest.getAge());
                     post.setBreed(postRequest.getBreed());
                     post.setEyeColor(postRequest.getEyeColor());
+                    post.setFurColor(postRequest.getFurColor());
+                    post.setGender(postRequest.getGender());
                     post.setSpecialSigns(postRequest.getSpecialSigns());
-                    post.setReward(postRequest.getReward());
-                    post.setAge(postRequest.getAge());
-                    post.setDetails(postRequest.getDetails());
-
+                    post.setName(postRequest.getName());
+                    post.setNationality(postRequest.getNationality());
+                    post.setSpecies(postRequest.getSpecies());
                     postRepo.save(post);
-//                    RecommenderSystemController.authenticateRecommenderSystem();
-//                    RecommenderSystemController.sendUpdatedPostToRecommenderSystem(post, postRequest.getPetImage());
                     return ResponseEntity.ok().build();
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -214,10 +217,9 @@ public class PostController {
                 Post post = optionalPost.get();
 
                 if (user.getId().equals(post.getUser().getId()) || isAdmin(user)) {
-                    boolean deleted = this.amazonClient.deleteFileFromS3Bucket(post.getPetImage(), amazonClient.getAnimalPhotoBucket());
+                    boolean deleted = this.amazonClient.deleteFileFromS3Bucket(post.getImage(), amazonClient.getAnimalPhotoBucket());
                     System.out.println(deleted);
                     postRepo.delete(post);
-//                    RecommenderSystemController.deletePostToRecommenderSystem(post);
                     return ResponseEntity.ok().build();
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

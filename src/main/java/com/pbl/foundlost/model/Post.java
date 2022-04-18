@@ -1,5 +1,4 @@
-package com.example.foundlost.model;
-
+package com.pbl.foundlost.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,36 +18,33 @@ public class Post {
     @Column(name = "post_id")
     Long id;
 
-    @Column(name = "pet_image")
-    String petImage;
+    @Column(name = "image")
+    String image;
 
     @Column(name = "status")
     String status;
 
-    @Column(name = "species")
-    String species;
-
-    @Column(name = "sterilization")
-    Boolean sterilization;
+    //Thing, animal, person
+    @Column(name = "type")
+    String type;
 
     @Column(name = "fur_color")
     String furColor;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date", columnDefinition = "DATETIME")
-    Date  createdDate;
+    @Column(name = "breed")
+    String breed;
 
-    @Column(name = "address")
-    String address;
+    @Column(name = "species")
+    String species;
 
-    @Column(name = "contacts")
-    String contacts;
+    @Column(name = "nationality")
+    String nationality;
+
+    @Column(name = "age")
+    String age;
 
     @Column(name = "gender")
     String gender;
-
-    @Column(name = "breed")
-    String breed;
 
     @Column(name = "eye_color")
     String eyeColor;
@@ -56,16 +52,26 @@ public class Post {
     @Column(name = "special_signs")
     String specialSigns;
 
+    @Column(name = "name")
+    String name;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_date", columnDefinition = "DATETIME")
+    Date createdDate;
+
+    @Column(name = "address")
+    String address;
+
+    @Column(name = "contacts")
+    String contacts;
+
     @Column(name = "reward")
     Integer reward;
-
-    @Column(name = "age")
-    Integer age;
 
     @Column(name = "details")
     String details;
 
     @ManyToOne
-    @JoinColumn(name="author_id", referencedColumnName = "id", columnDefinition = "int")
+    @JoinColumn(name = "author_id", referencedColumnName = "id", columnDefinition = "int")
     private User user;
 }

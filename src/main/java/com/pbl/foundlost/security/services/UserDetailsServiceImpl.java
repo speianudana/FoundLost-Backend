@@ -1,7 +1,7 @@
-package com.example.foundlost.security.services;
+package com.pbl.foundlost.security.services;
 
-import com.example.foundlost.model.User;
-import com.example.foundlost.repository.UserRepository;
+import com.pbl.foundlost.model.User;
+import com.pbl.foundlost.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

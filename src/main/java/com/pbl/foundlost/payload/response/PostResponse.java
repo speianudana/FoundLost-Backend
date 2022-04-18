@@ -1,4 +1,4 @@
-package com.example.foundlost.payload.response;
+package com.pbl.foundlost.payload.response;
 
 import lombok.Data;
 
@@ -7,19 +7,22 @@ import java.util.Date;
 @Data
 public class PostResponse {
     Long id;
-    String petImage;
+    String image;
     String status;
-    String species;
-    Boolean sterilization;
-    String furColor;
+    String type;
     Date createdDate;
     String address;
     String contacts;
-    String gender;
-    String breed;
-    String eyeColor;
-    String specialSigns;
     Integer reward;
-    Integer age;
     Long authorId;
+    String breed;
+    String details;
+    String gender;
+    String age;
+    String eyeColor;
+    String furColor;
+    String specialSigns;
+    String name;
+    String nationality;
+    String species;
 }

@@ -1,4 +1,4 @@
-package com.example.foundlost.payload.request;
+package com.pbl.foundlost.payload.request;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -7,22 +7,31 @@ import java.util.Date;
 
 @Data
 public class PostRequest {
-
+    //All
     Long id;
-    MultipartFile petImage;
+    MultipartFile image;
     Long authorId;
     String status;
-    String species;
-    Boolean sterilization;
-    String furColor;
+    String type;
     Date createdDate;
     String address;
     String contacts;
-    String gender;
+    String details;
+//=======================
+    //Things, animals
+    Integer reward;
+    //Animals
     String breed;
+    String furColor;
+    String species;
+
+    //People, animals
+    String gender;
+    String age;
     String eyeColor;
     String specialSigns;
-    Integer reward;
-    Integer age;
-    String details;
+    String name;
+
+    //People
+    String nationality;
 }

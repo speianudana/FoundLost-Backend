@@ -1,7 +1,7 @@
-package com.example.foundlost.security.services;
+package com.pbl.foundlost.security.services;
 
-import com.example.foundlost.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pbl.foundlost.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

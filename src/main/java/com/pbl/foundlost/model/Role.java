@@ -1,4 +1,4 @@
-package com.example.foundlost.model;
+package com.pbl.foundlost.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -27,6 +27,7 @@ public class Role {
     public Role() {
 
     }
+
     public Role(ERole name) {
         this.name = name;
     }

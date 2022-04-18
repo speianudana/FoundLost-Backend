@@ -1,6 +1,6 @@
-package com.example.foundlost.repository;
+package com.pbl.foundlost.repository;
 
-import com.example.foundlost.model.Post;
+import com.pbl.foundlost.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

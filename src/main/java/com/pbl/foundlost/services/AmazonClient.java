@@ -1,4 +1,4 @@
-package com.example.foundlost.services;
+package com.pbl.foundlost.services;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
@@ -46,9 +46,9 @@ public class AmazonClient {
     private void initializeAmazon() {
         AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
         this.s3client = AmazonS3Client.builder()
-                .withRegion("eu-west-3")
+                .withRegion("us-east-1")
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .build();;
+                .build();
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {

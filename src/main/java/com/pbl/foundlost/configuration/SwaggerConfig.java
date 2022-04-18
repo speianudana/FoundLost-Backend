@@ -1,4 +1,4 @@
-package com.example.foundlost.configuration;
+package com.pbl.foundlost.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ public class SwaggerConfig {
     public Docket postsApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.thesis.findpet.controllers"))
+                .apis(RequestHandlerSelectors.basePackage("com.pbl.foundlost.controllers"))
                 .paths(regex("/api.*"))
                 .build();
     }

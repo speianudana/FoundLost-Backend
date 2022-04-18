@@ -1,14 +1,15 @@
-package com.example.foundlost.controllers;
+package com.pbl.foundlost.controllers;
 
-import com.thesis.findpet.model.ERole;
-import com.thesis.findpet.model.Role;
-import com.thesis.findpet.model.User;
-import com.thesis.findpet.payload.request.UserRequest;
-import com.thesis.findpet.payload.response.UserResponse;
-import com.thesis.findpet.repository.RoleRepository;
-import com.thesis.findpet.repository.UserRepository;
-import com.thesis.findpet.services.AmazonClient;
-import com.thesis.findpet.services.UsersService;
+
+import com.pbl.foundlost.model.ERole;
+import com.pbl.foundlost.model.Role;
+import com.pbl.foundlost.model.User;
+import com.pbl.foundlost.payload.request.UserRequest;
+import com.pbl.foundlost.payload.response.UserResponse;
+import com.pbl.foundlost.repository.RoleRepository;
+import com.pbl.foundlost.repository.UserRepository;
+import com.pbl.foundlost.services.AmazonClient;
+import com.pbl.foundlost.services.UsersService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.example.foundlost.model;
+package com.pbl.foundlost.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -65,26 +65,29 @@ public class User {
 
 
     @ManyToOne
-    @JoinColumn(name="role_id", referencedColumnName = "id", columnDefinition = "int", insertable=false, updatable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", columnDefinition = "int", insertable = false, updatable = false)
     private Role role;
 
-    @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Post> posts;
 
-    public void addPost(Post post){
+    public void addPost(Post post) {
         posts.add(post);
         post.setUser(this);
     }
 
-    public void removePost(Post post){
+    public void removePost(Post post) {
         posts.remove(post);
         post.setUser(this);
     }
 
-    public User(){}
+    public User() {
+    }
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
-        this.password = password;}
+        this.password = password;
+    }
 }

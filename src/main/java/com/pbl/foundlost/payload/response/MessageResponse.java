@@ -1,4 +1,4 @@
-package com.example.foundlost.payload.response;
+package com.pbl.foundlost.payload.response;
 
 public class MessageResponse {
     private String message;

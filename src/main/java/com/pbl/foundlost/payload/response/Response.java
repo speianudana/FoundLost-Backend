@@ -1,4 +1,4 @@
-package com.example.foundlost.payload.response;
+package com.pbl.foundlost.payload.response;
 
 import lombok.Data;
 

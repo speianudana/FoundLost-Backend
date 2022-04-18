@@ -1,6 +1,6 @@
-package com.example.foundlost.security.jwt;
+package com.pbl.foundlost.security.jwt;
 
-import com.example.foundlost.security.services.UserDetailsImpl;
+import com.pbl.foundlost.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

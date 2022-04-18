@@ -1,9 +1,8 @@
-package com.example.foundlost.security;
+package com.pbl.foundlost.security;
 
-
-import com.example.foundlost.security.jwt.AuthEntryPointJwt;
-import com.example.foundlost.security.jwt.AuthTokenFilter;
-import com.example.foundlost.security.services.UserDetailsServiceImpl;
+import com.pbl.foundlost.security.jwt.AuthEntryPointJwt;
+import com.pbl.foundlost.security.jwt.AuthTokenFilter;
+import com.pbl.foundlost.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

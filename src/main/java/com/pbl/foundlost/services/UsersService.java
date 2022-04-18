@@ -1,6 +1,6 @@
-package com.example.foundlost.services;
+package com.pbl.foundlost.services;
 
-import com.thesis.findpet.repository.UserRepository;
+import com.pbl.foundlost.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +24,6 @@ public class UsersService {
         listNrUsers.forEach(System.out::println);
         return listNrUsers;
     }
-
 
 
 }

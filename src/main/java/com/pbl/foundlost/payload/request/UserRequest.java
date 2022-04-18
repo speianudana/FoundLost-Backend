@@ -1,7 +1,8 @@
-package com.example.foundlost.payload.request;
+package com.pbl.foundlost.payload.request;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
 @Data
 public class UserRequest {
     private Long id;

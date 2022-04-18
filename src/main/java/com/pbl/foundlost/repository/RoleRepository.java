@@ -1,7 +1,7 @@
-package com.example.foundlost.repository;
+package com.pbl.foundlost.repository;
 
-import com.example.foundlost.model.ERole;
-import com.example.foundlost.model.Role;
+import com.pbl.foundlost.model.ERole;
+import com.pbl.foundlost.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.example.foundlost.payload.request;
+package com.pbl.foundlost.payload.request;
 
 import javax.validation.constraints.NotBlank;
 

@@ -1,4 +1,4 @@
-package com.example.foundlost.security.jwt;
+package com.pbl.foundlost.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
