@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,9 +74,68 @@ public class AuthController {
                 userDetails.getUserPhoto()
         ));
     }
+//
+//    @PostMapping("/signup1")
+//    public ResponseEntity<?> registerUser(@ModelAttribute SignUpRequest signUpRequest) {
+//        System.out.println(signUpRequest.getUsername());
+//        System.out.println(signUpRequest.getEmail());
+//        System.out.println(signUpRequest.getPassword());
+//        System.out.println(signUpRequest.getRole());
+//        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new MessageResponse("Error: Username is already taken!"));
+//        }
+//
+//        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new MessageResponse("Error: Email is already in use!"));
+//        }
+//
+//        User user = new User(signUpRequest.getUsername(),
+//                signUpRequest.getEmail(),
+//                encoder.encode(signUpRequest.getPassword()));
+//
+//        Set<String> strRoles = signUpRequest.getRole();
+//        Role role = new Role();
+//        if (strRoles == null) {
+//            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+//                    .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
+//            role = userRole;
+//        } else {
+//            if (signUpRequest.getRole().contains("admin")) {
+//                Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+//                        .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
+//                role = adminRole;
+//            } else {
+//                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+//                        .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
+//                role = userRole;
+//            }
+//        }
+//        if (signUpRequest.getUserPhoto() != null) {
+//            String filePath = this.amazonClient.uploadFile(signUpRequest.getUserPhoto(), amazonClient.getUsersPhotoBucket());
+//            user.setUserPhoto(filePath);
+//        }
+//        user.setFirstName(signUpRequest.getFirstName());
+//        user.setLastName(signUpRequest.getLastName());
+//        user.setAddress(signUpRequest.getAddress());
+//        user.setContacts(signUpRequest.getContacts());
+//
+//        user.setRole(role);
+//        user.setRoleId(role.getId());
+//        System.out.println(signUpRequest.getUsername());
+//        System.out.println(signUpRequest.getEmail());
+//        System.out.println(signUpRequest.getPassword());
+//        System.out.println(signUpRequest.getRole());
+//        userRepository.save(user);
+//
+//        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+//    }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @ModelAttribute SignUpRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
         System.out.println(signUpRequest.getUsername());
         System.out.println(signUpRequest.getEmail());
         System.out.println(signUpRequest.getPassword());
@@ -85,22 +145,20 @@ public class AuthController {
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
         }
-
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
-
+        // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
-
         Set<String> strRoles = signUpRequest.getRole();
-        Role role = new Role();
+        Role role;
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_REG_USER)
-                    .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             role = userRole;
         } else {
             if (signUpRequest.getRole().contains("admin")) {
@@ -108,11 +166,12 @@ public class AuthController {
                         .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
                 role = adminRole;
             } else {
-                Role userRole = roleRepository.findByName(ERole.ROLE_REG_USER)
+                Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                         .orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
                 role = userRole;
             }
         }
+
         if (signUpRequest.getUserPhoto() != null) {
             String filePath = this.amazonClient.uploadFile(signUpRequest.getUserPhoto(), amazonClient.getUsersPhotoBucket());
             user.setUserPhoto(filePath);
@@ -124,12 +183,7 @@ public class AuthController {
 
         user.setRole(role);
         user.setRoleId(role.getId());
-        System.out.println(signUpRequest.getUsername());
-        System.out.println(signUpRequest.getEmail());
-        System.out.println(signUpRequest.getPassword());
-        System.out.println(signUpRequest.getRole());
         userRepository.save(user);
-
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

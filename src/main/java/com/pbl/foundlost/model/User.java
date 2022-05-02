@@ -3,14 +3,15 @@ package com.pbl.foundlost.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "users",
@@ -23,26 +24,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+//    @NotBlank
     @Size(min = 2, max = 50)
     @Column(name = "first_name")
     private String firstName;
 
-    @NotBlank
+//    @NotBlank
     @Size(min = 2, max = 50)
     @Column(name = "last_name")
     private String lastName;
 
-    @NotBlank
-    @Size(max = 20)
+//    @NotBlank
+    @Size(max = 50)
     private String username;
 
-    @NotBlank
+//    @NotBlank
     @Size(max = 50)
     @Email
     private String email;
 
-    @NotBlank
+//    @NotBlank
     @Size(max = 120)
     private String password;
 
@@ -56,12 +57,7 @@ public class User {
     private String userPhoto;
 
     @Column(name = "role_id")
-    private Integer roleId;
-//    @ManyToOne
-//    @JoinTable(name = "roles",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id"))
-//    private Set<Role> roles = new HashSet<>();
+    private Long roleId;
 
 
     @ManyToOne
@@ -82,8 +78,6 @@ public class User {
         post.setUser(this);
     }
 
-    public User() {
-    }
 
     public User(String username, String email, String password) {
         this.username = username;

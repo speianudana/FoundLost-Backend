@@ -19,7 +19,7 @@ public class PostRequest {
     String details;
 //=======================
     //Things, animals
-    Integer reward;
+    Long reward;
     //Animals
     String breed;
     String furColor;

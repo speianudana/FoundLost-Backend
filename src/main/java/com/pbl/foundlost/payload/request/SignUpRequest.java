@@ -1,6 +1,8 @@
 package com.pbl.foundlost.payload.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Column;
@@ -10,6 +12,8 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SignUpRequest {
 
     @NotBlank

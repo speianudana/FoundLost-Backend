@@ -13,7 +13,7 @@ public class PostResponse {
     Date createdDate;
     String address;
     String contacts;
-    Integer reward;
+    Long reward;
     Long authorId;
     String breed;
     String details;

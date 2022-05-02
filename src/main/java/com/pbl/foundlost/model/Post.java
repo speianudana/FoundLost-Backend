@@ -3,6 +3,7 @@ package com.pbl.foundlost.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.Date;
 public class Post {
     @Id
     @GeneratedValue
-    @Column(name = "post_id")
+    @Column(name = "post_id", columnDefinition = "bigint")
     Long id;
 
     @Column(name = "image")
@@ -66,12 +67,12 @@ public class Post {
     String contacts;
 
     @Column(name = "reward")
-    Integer reward;
+    Long reward;
 
     @Column(name = "details")
     String details;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", columnDefinition = "bigint")
     private User user;
 }
