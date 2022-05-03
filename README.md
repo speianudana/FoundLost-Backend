@@ -14,20 +14,20 @@
     
   3. Connect to the database using DBeaver/MySQL Workspace or SQL Developer.
   Main configurations:
-   ![Main configuration](Main-conf-db.png)
+   ![Main_configuration](https://github.com/speianudana/FoundLost-Backend/blob/master/images/Main-conf-db.PNG)
    
    Driver configurations: 
-   ![Driver conf](Driver-conf-db-2.png)
+   ![Driver conf](https://github.com/speianudana/FoundLost-Backend/blob/master/images/Driver-conf-db-2.PNG)
    
    SSL configurations:
-   ![SSL configuratiob](SSL-conf-db-4.png)
+   ![SSL configuratiob](https://github.com/speianudana/FoundLost-Backend/blob/master/images/SSL-conf-db-4.PNG)
    
    And you must be able to connect and see the tables:
-   ![DB](tables.png)
+   ![DB](https://github.com/speianudana/FoundLost-Backend/blob/master/images/tables.PNG)
    
   4. Insert in the roles table the next values:
 
-  ![Roles](roles.png)
+  ![Roles](https://github.com/speianudana/FoundLost-Backend/blob/master/images/roles.PNG)
   
   5. Access SWAGGER: http://localhost:8080/foundlost/swagger-ui/
 
@@ -36,7 +36,7 @@
 In case of an error related to id and autoincrement do:
 1. Delete posts table.
 2. Check the autoincrement checkbox from properties for field "id" for users table.
-![Roles](check.png)
+![Roles](https://github.com/speianudana/FoundLost-Backend/blob/master/images/check.PNG)
 
 3. Execute:
 ```
