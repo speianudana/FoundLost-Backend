@@ -14,15 +14,19 @@
     
   3. Connect to the database using DBeaver/MySQL Workspace or SQL Developer.
   Main configurations:
+
    ![Main_configuration](https://github.com/speianudana/FoundLost-Backend/blob/master/images/Main-conf-db.PNG)
    
    Driver configurations: 
+
    ![Driver conf](https://github.com/speianudana/FoundLost-Backend/blob/master/images/Driver-conf-db-2.PNG)
    
    SSL configurations:
+
    ![SSL configuratiob](https://github.com/speianudana/FoundLost-Backend/blob/master/images/SSL-conf-db-4.PNG)
    
    And you must be able to connect and see the tables:
+
    ![DB](https://github.com/speianudana/FoundLost-Backend/blob/master/images/tables.PNG)
    
   4. Insert in the roles table the next values:
@@ -36,6 +40,7 @@
 In case of an error related to id and autoincrement do:
 1. Delete posts table.
 2. Check the autoincrement checkbox from properties for field "id" for users table.
+
 ![Roles](https://github.com/speianudana/FoundLost-Backend/blob/master/images/check.PNG)
 
 3. Execute:
