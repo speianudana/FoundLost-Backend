@@ -1,4 +1,16 @@
 FROM openjdk:11
-ADD target/foundlost.jar foundlost.jar
+
+WORKDIR /spring-boot-app
+
+ADD . .
+
+RUN chmod +x -R .
+
+# RUN ./mvnw spring-boot:run
+
+RUN ./mvnw clean install
+RUN chmod +x -R ./target
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","foundlost.jar"]
+
+ENTRYPOINT ["java","-jar", "target/foundlost.jar"]
