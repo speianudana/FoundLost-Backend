@@ -24,6 +24,3 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
-    volumes:
-      - ./target:/target
-      - ./.m2:/root/.m2
