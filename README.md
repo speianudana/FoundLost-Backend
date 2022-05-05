@@ -1,18 +1,13 @@
 ### Found Lost App Bakend
 
-### How to run in Docker
- 1. In the project root run:
-    ```
-    docker build -t foundlost-back .
-    ```
-    
-  2. Run 
+### How to run in Docker    
+  1. Run 
     ```
     docker-compose up
     ```
     
     
-  3. Connect to the database using DBeaver/MySQL Workspace or SQL Developer.
+  2. Connect to the database using DBeaver/MySQL Workspace or SQL Developer.
   Main configurations:
 
    ![Main_configuration](https://github.com/speianudana/FoundLost-Backend/blob/master/images/Main-conf-db.PNG)
@@ -29,11 +24,11 @@
 
    ![DB](https://github.com/speianudana/FoundLost-Backend/blob/master/images/tables.PNG)
    
-  4. Insert in the roles table the next values:
+  3. Insert in the roles table the next values:
 
   ![Roles](https://github.com/speianudana/FoundLost-Backend/blob/master/images/roles.PNG)
   
-  5. Access SWAGGER: http://localhost:8080/foundlost/swagger-ui/
+  4. Access SWAGGER: http://localhost:8080/foundlost/swagger-ui/
 
 
 #### In case of problems
