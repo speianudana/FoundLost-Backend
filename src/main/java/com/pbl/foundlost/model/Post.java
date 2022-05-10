@@ -7,6 +7,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +19,9 @@ public class Post {
     @GeneratedValue
     @Column(name = "post_id", columnDefinition = "bigint")
     Long id;
+
+    @Column(name = "uuid", unique = true)
+    UUID uuid;
 
     @Column(name = "image")
     String image;

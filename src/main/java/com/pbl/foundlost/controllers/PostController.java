@@ -4,20 +4,28 @@ import com.pbl.foundlost.model.Post;
 import com.pbl.foundlost.model.User;
 import com.pbl.foundlost.payload.request.PostRequest;
 import com.pbl.foundlost.payload.response.MessageResponse;
+import com.pbl.foundlost.payload.response.PostResponse;
 import com.pbl.foundlost.repository.PostRepository;
 import com.pbl.foundlost.repository.UserRepository;
 import com.pbl.foundlost.services.AmazonClient;
+import com.pbl.foundlost.services.matcher.MatcherService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,6 +36,8 @@ public class PostController {
     private final UserRepository userRepository;
 
     private final PostRepository postRepo;
+
+    private final MatcherService matcherService;
 
     private AmazonClient amazonClient;
 
@@ -47,6 +57,7 @@ public class PostController {
     public ResponseEntity createPost(@Valid @ModelAttribute PostRequest postRequest) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
+        post.setUuid(UUID.randomUUID());
         try {
             String filePath = this.amazonClient.uploadFile(postRequest.getImage(), amazonClient.getAnimalPhotoBucket());
             post.setImage(filePath);
@@ -80,12 +91,12 @@ public class PostController {
 
     //done
     @GetMapping("/getPost")
-    public ResponseEntity<Optional<Post>> getPost(@RequestParam String id) {
+    public ResponseEntity<PostResponse> getPost(@RequestParam String id) {
 
         try {
-            Optional<Post> post = postRepo.findById(Long.parseLong(id));
-
-            return ResponseEntity.ok(post);
+            Post post = postRepo.findById(Long.parseLong(id))
+                    .orElseThrow(() -> new ResourceNotFoundException(format("Post with id %s not found", id)));
+            return ResponseEntity.ok(getPostResponse(post));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -93,12 +104,14 @@ public class PostController {
 
     //done
     @GetMapping("/getAllPosts")
-    public List<Post> getAllPosts() {
+    public List<PostResponse> getAllPosts() {
         List<Post> posts = postRepo.findAll();
         Collections.reverse(posts);
 //        RecommenderSystemController.authenticateRecommenderSystem();
 //        RecommenderSystemController.sendTextToExtract();
-        return posts;
+        return posts.stream()
+                .map(this::getPostResponse)
+                .collect(toList());
     }
 
     //done
@@ -122,25 +135,29 @@ public class PostController {
     }
 
     //done
-    @GetMapping("/getLostPetsPosts")
-    public List<Post> getLostPetsPosts() {
-        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("Pierdut")).collect(Collectors.toList());
+    @GetMapping("/getLostPosts")
+    public List<PostResponse> getLostPetsPosts() {
+        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("lost")).collect(toList());
         Collections.reverse(posts);
-        return posts;
+        return posts.stream()
+                .map(this::getPostResponse)
+                .collect(toList());
     }
 
     //done
-    @GetMapping("/getFoundPetsPosts")
-    public List<Post> getFoundPetsPosts() {
-        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("Găsit")).collect(Collectors.toList());
+    @GetMapping("/getFoundPosts")
+    public List<PostResponse> getFoundPetsPosts() {
+        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("found")).collect(toList());
         Collections.reverse(posts);
-        return posts;
+        return posts.stream()
+                .map(this::getPostResponse)
+                .collect(toList());
     }
 
     //done
     @GetMapping("/getSuccessStories")
     public List<Post> getSuccessStories() {
-        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("Ajuns acasă")).collect(Collectors.toList());
+        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("Ajuns acasă")).collect(toList());
         Collections.reverse(posts);
         return posts;
     }
@@ -148,9 +165,11 @@ public class PostController {
     //done
     @GetMapping("/getMyPosts")
 //    @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
-    public List<Post> getMyPosts() {
+    public List<PostResponse> getMyPosts() {
         User user = userRepository.getOne(getAuthenticatedUserId());
-        return postRepo.findAll().stream().filter(post -> post.getUser().equals(user)).collect(Collectors.toList());
+        return postRepo.findAll().stream().filter(post -> post.getUser().equals(user))
+                .map(this::getPostResponse)
+                .collect(toList());
     }
 
     //done
@@ -246,5 +265,10 @@ public class PostController {
             System.out.println("Not present");
         }
         return userId;
+    }
+
+    private PostResponse getPostResponse(Post post) {
+        List<Post> matchedPosts = matcherService.getMatchedPosts(post);
+        return new PostResponse(post, matchedPosts);
     }
 }

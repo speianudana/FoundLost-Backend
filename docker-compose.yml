@@ -13,6 +13,8 @@ services:
       - MYSQL_PASSWORD=password
     healthcheck:
       test: "exit 0"
+    networks:
+      - lostfound-network
 
   server:
     build:
@@ -24,3 +26,10 @@ services:
     depends_on:
       mysqldb:
         condition: service_healthy
+    networks:
+      - lostfound-network
+
+
+networks:
+  lostfound-network:
+    external: true

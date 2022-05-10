@@ -1,28 +1,14 @@
 package com.pbl.foundlost.payload.response;
 
+import com.pbl.foundlost.model.Post;
 import lombok.Data;
+import lombok.Value;
 
 import java.util.Date;
+import java.util.List;
 
-@Data
+@Value
 public class PostResponse {
-    Long id;
-    String image;
-    String status;
-    String type;
-    Date createdDate;
-    String address;
-    String contacts;
-    Long reward;
-    Long authorId;
-    String breed;
-    String details;
-    String gender;
-    String age;
-    String eyeColor;
-    String furColor;
-    String specialSigns;
-    String name;
-    String nationality;
-    String species;
+    Post post;
+    List<Post> matchingPosts;
 }
