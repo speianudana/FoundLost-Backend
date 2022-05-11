@@ -1,6 +1,7 @@
 package com.pbl.foundlost.services.matcher;
 
 import com.pbl.foundlost.model.Post;
+import com.pbl.foundlost.payload.dto.MatchedPostDto;
 import com.pbl.foundlost.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -32,7 +33,7 @@ public class MatcherService {
                 .orElseThrow(() -> new RuntimeException("Null response from matcher"));
     }
 
-    public List<Post> getMatchedPosts(Post post) {
+    public List<MatchedPostDto> getMatchedPosts(Post post) {
         ResponseEntity<MatchesResponse> response = restTemplate.exchange(
                 "http://lostfound-matcher:5000/api/v1/posts/" + post.getUuid() + "/matches",
                 HttpMethod.GET,
@@ -44,12 +45,12 @@ public class MatcherService {
                 .orElseThrow(() -> new RuntimeException("Null response from matcher"))
                 .getMatches()
                 .stream()
-                .map(this::getPost)
+                .map(match -> new MatchedPostDto(match.getMatchedPostUuid(), match.getNumberIntersectedKeywords(), getPost(match)))
                 .collect(toList());
     }
 
     private Post getPost(MatchDto match) {
         return postRepository.findByUuid(match.getMatchedPostUuid())
-            .orElseThrow(() -> new RuntimeException("Matched post not found"));
+                .orElseThrow(() -> new RuntimeException("Matched post not found"));
     }
 }

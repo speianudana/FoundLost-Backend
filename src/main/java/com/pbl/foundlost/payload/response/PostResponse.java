@@ -1,14 +1,13 @@
 package com.pbl.foundlost.payload.response;
 
 import com.pbl.foundlost.model.Post;
-import lombok.Data;
+import com.pbl.foundlost.payload.dto.MatchedPostDto;
 import lombok.Value;
 
-import java.util.Date;
 import java.util.List;
 
 @Value
 public class PostResponse {
     Post post;
-    List<Post> matchingPosts;
+    List<MatchedPostDto> matchingPosts;
 }

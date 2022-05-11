@@ -2,6 +2,7 @@ package com.pbl.foundlost.controllers;
 
 import com.pbl.foundlost.model.Post;
 import com.pbl.foundlost.model.User;
+import com.pbl.foundlost.payload.dto.MatchedPostDto;
 import com.pbl.foundlost.payload.request.PostRequest;
 import com.pbl.foundlost.payload.response.MessageResponse;
 import com.pbl.foundlost.payload.response.PostResponse;
@@ -273,7 +274,7 @@ public class PostController {
     }
 
     private PostResponse getPostResponse(Post post) {
-        List<Post> matchedPosts = matcherService.getMatchedPosts(post);
+        List<MatchedPostDto> matchedPosts = matcherService.getMatchedPosts(post);
         return new PostResponse(post, matchedPosts);
     }
 }
