@@ -8,7 +8,6 @@ import java.util.List;
 
 @Value
 public class MatchesResponse {
-    @NonNull
     String status;
     @NonNull
     List<MatchDto> matches;

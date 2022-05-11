@@ -4,12 +4,14 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 public class PostRequest {
     //All
     Long id;
     MultipartFile image;
+    UUID uuid;
     Long authorId;
     String status;
     String type;

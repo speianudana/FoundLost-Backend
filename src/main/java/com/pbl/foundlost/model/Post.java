@@ -1,9 +1,10 @@
 package com.pbl.foundlost.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,7 +21,9 @@ public class Post {
     @Column(name = "post_id", columnDefinition = "bigint")
     Long id;
 
-    @Column(name = "uuid", unique = true)
+    @Column(name = "uuid", unique = true, columnDefinition = "VARCHAR(36)")
+    @JsonProperty("post_uuid")
+    @Type(type = "uuid-char")
     UUID uuid;
 
     @Column(name = "image")
@@ -31,6 +34,7 @@ public class Post {
 
     //Thing, animal, person
     @Column(name = "type")
+    @JsonProperty("type")
     String type;
 
     @Column(name = "fur_color")
@@ -74,6 +78,7 @@ public class Post {
     Long reward;
 
     @Column(name = "details")
+    @JsonProperty("details")
     String details;
 
     @ManyToOne

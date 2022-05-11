@@ -8,6 +8,7 @@ import com.pbl.foundlost.payload.response.PostResponse;
 import com.pbl.foundlost.repository.PostRepository;
 import com.pbl.foundlost.repository.UserRepository;
 import com.pbl.foundlost.services.AmazonClient;
+import com.pbl.foundlost.services.matcher.CreatePostResponse;
 import com.pbl.foundlost.services.matcher.MatcherService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -17,14 +18,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 
@@ -57,7 +56,7 @@ public class PostController {
     public ResponseEntity createPost(@Valid @ModelAttribute PostRequest postRequest) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
-        post.setUuid(UUID.randomUUID());
+        post.setUuid(isNull(postRequest.getUuid()) ? UUID.randomUUID() : postRequest.getUuid());
         try {
             String filePath = this.amazonClient.uploadFile(postRequest.getImage(), amazonClient.getAnimalPhotoBucket());
             post.setImage(filePath);
@@ -78,11 +77,17 @@ public class PostController {
             post.setName(postRequest.getName());
             post.setNationality(postRequest.getNationality());
             post.setSpecies(postRequest.getSpecies());
-            postRepo.save(post);
+            Post persistedPost = postRepo.save(post);
             List<Post> list = postRepo.findAll();
             Post lastPost = list.get(list.size() - 1);
 //            RecommenderSystemController.authenticateRecommenderSystem();
 //            RecommenderSystemController.sendCreatedPostToRecommenderSystem(lastPost, postRequest.getPetImage());
+
+            CreatePostResponse createAIPostResponse = matcherService.createPost(post);
+            if (!matcherService.createPost(persistedPost).getStatus().equals("ok")) {
+                return ResponseEntity.badRequest().body(createAIPostResponse);
+            }
+
             return ResponseEntity.ok(new MessageResponse("Post created successfully!"));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -137,7 +142,7 @@ public class PostController {
     //done
     @GetMapping("/getLostPosts")
     public List<PostResponse> getLostPetsPosts() {
-        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("lost")).collect(toList());
+        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getType().equals("lost")).collect(toList());
         Collections.reverse(posts);
         return posts.stream()
                 .map(this::getPostResponse)
@@ -147,7 +152,7 @@ public class PostController {
     //done
     @GetMapping("/getFoundPosts")
     public List<PostResponse> getFoundPetsPosts() {
-        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("found")).collect(toList());
+        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getType().equals("found")).collect(toList());
         Collections.reverse(posts);
         return posts.stream()
                 .map(this::getPostResponse)
