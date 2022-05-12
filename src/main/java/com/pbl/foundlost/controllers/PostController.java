@@ -3,7 +3,7 @@ package com.pbl.foundlost.controllers;
 import com.pbl.foundlost.model.Post;
 import com.pbl.foundlost.model.User;
 import com.pbl.foundlost.payload.dto.MatchedPostDto;
-import com.pbl.foundlost.payload.request.PostRequest;
+import com.pbl.foundlost.payload.request.PostRequestData;
 import com.pbl.foundlost.payload.response.MessageResponse;
 import com.pbl.foundlost.payload.response.PostResponse;
 import com.pbl.foundlost.repository.PostRepository;
@@ -15,16 +15,19 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.*;
 
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 
 
@@ -54,30 +57,32 @@ public class PostController {
     //done
     @PostMapping("/createPost")
 //    @PreAuthorize("hasRole('REG_USER') or hasRole('ADMIN')")
-    public ResponseEntity createPost(@Valid @ModelAttribute PostRequest postRequest) {
+    public ResponseEntity createPost(@Valid @RequestBody PostRequestData postRequestData,
+                                     @Nullable @RequestParam MultipartFile image) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
-        post.setUuid(isNull(postRequest.getUuid()) ? UUID.randomUUID() : postRequest.getUuid());
+        post.setUuid(isNull(postRequestData.getUuid()) ? UUID.randomUUID() : postRequestData.getUuid());
         try {
-            String filePath = this.amazonClient.uploadFile(postRequest.getImage(), amazonClient.getAnimalPhotoBucket());
-            post.setImage(filePath);
-            post.setStatus(postRequest.getStatus());
-            post.setType(postRequest.getType());
-            post.setAddress(postRequest.getAddress());
+            if (nonNull(image)) {
+                post.setImage(this.amazonClient.uploadFile(image, amazonClient.getAnimalPhotoBucket()));
+            }
+            post.setStatus(postRequestData.getStatus());
+            post.setType(postRequestData.getType());
+            post.setAddress(postRequestData.getAddress());
             post.setCreatedDate(new Date());
-            post.setContacts(postRequest.getContacts());
+            post.setContacts(postRequestData.getContacts());
             post.setUser(user);
-            post.setReward(postRequest.getReward());
-            post.setDetails(postRequest.getDetails());
-            post.setAge(postRequest.getAge());
-            post.setBreed(postRequest.getBreed());
-            post.setEyeColor(postRequest.getEyeColor());
-            post.setFurColor(postRequest.getFurColor());
-            post.setGender(postRequest.getGender());
-            post.setSpecialSigns(postRequest.getSpecialSigns());
-            post.setName(postRequest.getName());
-            post.setNationality(postRequest.getNationality());
-            post.setSpecies(postRequest.getSpecies());
+            post.setReward(postRequestData.getReward());
+            post.setDetails(postRequestData.getDetails());
+            post.setAge(postRequestData.getAge());
+            post.setBreed(postRequestData.getBreed());
+            post.setEyeColor(postRequestData.getEyeColor());
+            post.setFurColor(postRequestData.getFurColor());
+            post.setGender(postRequestData.getGender());
+            post.setSpecialSigns(postRequestData.getSpecialSigns());
+            post.setName(postRequestData.getName());
+            post.setNationality(postRequestData.getNationality());
+            post.setSpecies(postRequestData.getSpecies());
             Post persistedPost = postRepo.save(post);
             List<Post> list = postRepo.findAll();
             Post lastPost = list.get(list.size() - 1);
@@ -181,37 +186,38 @@ public class PostController {
     //done
     @PutMapping("/editPost")
     @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
-    public ResponseEntity editPost(@Valid @ModelAttribute PostRequest postRequest) {
+    public ResponseEntity editPost(@Valid @RequestBody PostRequestData postRequestData,
+                                   @Nullable @RequestParam MultipartFile image) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         System.out.println(isAdmin(user));
 
         try {
-            Optional<Post> optionalPost = postRepo.findById(postRequest.getId());
+            Optional<Post> optionalPost = postRepo.findById(postRequestData.getId());
             if (optionalPost.isPresent()) {
                 Post post = optionalPost.get();
                 System.out.println("User id" + user.getId());
-                System.out.println("Author" + postRequest.getAuthorId());
-                if (user.getId().equals(postRequest.getAuthorId()) || isAdmin(user)) {
-                    System.out.println(postRequest.getImage());
-                    if (postRequest.getImage() != null) {
-                        String filePath = this.amazonClient.uploadFile(postRequest.getImage(), amazonClient.getAnimalPhotoBucket());
+                System.out.println("Author" + postRequestData.getAuthorId());
+                if (user.getId().equals(postRequestData.getAuthorId()) || isAdmin(user)) {
+                    System.out.println(image);
+                    if (image != null) {
+                        String filePath = this.amazonClient.uploadFile(image, amazonClient.getAnimalPhotoBucket());
                         post.setImage(filePath);
                     }
-                    post.setStatus(postRequest.getStatus());
-                    post.setType(postRequest.getType());
-                    post.setAddress(postRequest.getAddress());
-                    post.setContacts(postRequest.getContacts());
-                    post.setReward(postRequest.getReward());
-                    post.setDetails(postRequest.getDetails());
-                    post.setAge(postRequest.getAge());
-                    post.setBreed(postRequest.getBreed());
-                    post.setEyeColor(postRequest.getEyeColor());
-                    post.setFurColor(postRequest.getFurColor());
-                    post.setGender(postRequest.getGender());
-                    post.setSpecialSigns(postRequest.getSpecialSigns());
-                    post.setName(postRequest.getName());
-                    post.setNationality(postRequest.getNationality());
-                    post.setSpecies(postRequest.getSpecies());
+                    post.setStatus(postRequestData.getStatus());
+                    post.setType(postRequestData.getType());
+                    post.setAddress(postRequestData.getAddress());
+                    post.setContacts(postRequestData.getContacts());
+                    post.setReward(postRequestData.getReward());
+                    post.setDetails(postRequestData.getDetails());
+                    post.setAge(postRequestData.getAge());
+                    post.setBreed(postRequestData.getBreed());
+                    post.setEyeColor(postRequestData.getEyeColor());
+                    post.setFurColor(postRequestData.getFurColor());
+                    post.setGender(postRequestData.getGender());
+                    post.setSpecialSigns(postRequestData.getSpecialSigns());
+                    post.setName(postRequestData.getName());
+                    post.setNationality(postRequestData.getNationality());
+                    post.setSpecies(postRequestData.getSpecies());
                     postRepo.save(post);
                     return ResponseEntity.ok().build();
                 } else {

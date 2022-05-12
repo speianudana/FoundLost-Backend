@@ -20,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import static java.util.Objects.isNull;
+
 @Service
 @Data
 public class AmazonClient {

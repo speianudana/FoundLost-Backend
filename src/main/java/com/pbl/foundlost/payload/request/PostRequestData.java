@@ -7,10 +7,9 @@ import java.util.Date;
 import java.util.UUID;
 
 @Data
-public class PostRequest {
+public class PostRequestData {
     //All
     Long id;
-    MultipartFile image;
     UUID uuid;
     Long authorId;
     String status;
