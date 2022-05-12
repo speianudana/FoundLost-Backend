@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -52,5 +53,18 @@ public class MatcherService {
     private Post getPost(MatchDto match) {
         return postRepository.findByUuid(match.getMatchedPostUuid())
                 .orElseThrow(() -> new RuntimeException("Matched post not found"));
+    }
+
+    public void deletePost(Post post) {
+        if (isNull(post.getUuid())) {
+            throw new RuntimeException("Null post uuid");
+        }
+
+        restTemplate.exchange(
+                "http://lostfound-matcher:5000/api/v1/posts/" + post.getUuid(),
+                HttpMethod.DELETE,
+                null,
+                DeletePostResponse.class
+        );
     }
 }

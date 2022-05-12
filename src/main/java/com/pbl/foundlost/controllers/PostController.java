@@ -11,9 +11,11 @@ import com.pbl.foundlost.repository.UserRepository;
 import com.pbl.foundlost.services.AmazonClient;
 import com.pbl.foundlost.services.matcher.CreatePostResponse;
 import com.pbl.foundlost.services.matcher.MatcherService;
+import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,10 +57,13 @@ public class PostController {
      **/
 
     //done
-    @PostMapping("/createPost")
+    @PostMapping(value = "/createPost", consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+    })
 //    @PreAuthorize("hasRole('REG_USER') or hasRole('ADMIN')")
     public ResponseEntity createPost(@Valid @RequestBody PostRequestData postRequestData,
-                                     @Nullable @RequestParam MultipartFile image) {
+                                     @RequestPart(value = "image", required = false) MultipartFile image) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
         post.setUuid(isNull(postRequestData.getUuid()) ? UUID.randomUUID() : postRequestData.getUuid());
@@ -102,11 +107,11 @@ public class PostController {
 
     //done
     @GetMapping("/getPost")
-    public ResponseEntity<PostResponse> getPost(@RequestParam String id) {
+    public ResponseEntity<PostResponse> getPost(@RequestParam UUID uuid) {
 
         try {
-            Post post = postRepo.findById(Long.parseLong(id))
-                    .orElseThrow(() -> new ResourceNotFoundException(format("Post with id %s not found", id)));
+            Post post = postRepo.findByUuid(uuid)
+                    .orElseThrow(() -> new ResourceNotFoundException(format("Post with uuid %s not found", uuid)));
             return ResponseEntity.ok(getPostResponse(post));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -168,7 +173,7 @@ public class PostController {
     //done
     @GetMapping("/getSuccessStories")
     public List<Post> getSuccessStories() {
-        List<Post> posts = postRepo.findAll().stream().filter(post -> post.getStatus().equals("Ajuns acasă")).collect(toList());
+        List<Post> posts = postRepo.findAll().stream().filter(Post::getIsResolved).collect(toList());
         Collections.reverse(posts);
         return posts;
     }
@@ -184,15 +189,18 @@ public class PostController {
     }
 
     //done
-    @PutMapping("/editPost")
+    @PutMapping(value = "/editPost", consumes = {
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            MediaType.APPLICATION_JSON_VALUE
+    })
     @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
     public ResponseEntity editPost(@Valid @RequestBody PostRequestData postRequestData,
-                                   @Nullable @RequestParam MultipartFile image) {
+                                   @RequestPart(name = "image", required = false) MultipartFile image) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         System.out.println(isAdmin(user));
 
         try {
-            Optional<Post> optionalPost = postRepo.findById(postRequestData.getId());
+            Optional<Post> optionalPost = postRepo.findByUuid(postRequestData.getUuid());
             if (optionalPost.isPresent()) {
                 Post post = optionalPost.get();
                 System.out.println("User id" + user.getId());
@@ -239,11 +247,11 @@ public class PostController {
     //done
     @DeleteMapping("/deletePost")
 //    @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
-    public ResponseEntity deletePost(@RequestParam(name = "id") String id) {
+    public ResponseEntity deletePost(@RequestParam(name = "uuid") UUID postUuid) {
         User user = userRepository.getOne(getAuthenticatedUserId());
 
         try {
-            Optional<Post> optionalPost = postRepo.findById(Long.parseLong(id));
+            Optional<Post> optionalPost = postRepo.findByUuid(postUuid);
             if (optionalPost.isPresent()) {
                 Post post = optionalPost.get();
 
@@ -251,6 +259,7 @@ public class PostController {
                     boolean deleted = this.amazonClient.deleteFileFromS3Bucket(post.getImage(), amazonClient.getAnimalPhotoBucket());
                     System.out.println(deleted);
                     postRepo.delete(post);
+                    matcherService.deletePost(post);
                     return ResponseEntity.ok().build();
                 } else {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

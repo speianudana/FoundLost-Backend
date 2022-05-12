@@ -29,6 +29,9 @@ public class Post {
     @Column(name = "image")
     String image;
 
+    @Column(name = "is_resolved", nullable = false)
+    Boolean isResolved = false;
+
     @Column(name = "status")
     String status;
 
@@ -36,6 +39,9 @@ public class Post {
     @Column(name = "type")
     @JsonProperty("type")
     String type;
+
+    @Column(name = "category")
+    String category;
 
     @Column(name = "fur_color")
     String furColor;
