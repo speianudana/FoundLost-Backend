@@ -1,17 +1,20 @@
 package com.pbl.foundlost.controllers;
 
+import com.pbl.foundlost.model.GeographicalLocation;
 import com.pbl.foundlost.model.Post;
 import com.pbl.foundlost.model.User;
 import com.pbl.foundlost.payload.dto.MatchedPostDto;
+import com.pbl.foundlost.payload.dto.NearPostDto;
 import com.pbl.foundlost.payload.request.PostRequestData;
 import com.pbl.foundlost.payload.response.MessageResponse;
 import com.pbl.foundlost.payload.response.PostResponse;
 import com.pbl.foundlost.repository.PostRepository;
 import com.pbl.foundlost.repository.UserRepository;
 import com.pbl.foundlost.services.AmazonClient;
+import com.pbl.foundlost.services.PostsService;
 import com.pbl.foundlost.services.matcher.CreatePostResponse;
 import com.pbl.foundlost.services.matcher.MatcherService;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -44,6 +47,8 @@ public class PostController {
 
     private final MatcherService matcherService;
 
+    private final PostsService postsService;
+
     private AmazonClient amazonClient;
 
     /**
@@ -57,13 +62,14 @@ public class PostController {
      **/
 
     //done
-    @PostMapping(value = "/createPost", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
-    })
+    @PostMapping(value = "/createPost")
+    @ApiOperation(value = "asd", consumes = "multipart/form-data, application/json")
 //    @PreAuthorize("hasRole('REG_USER') or hasRole('ADMIN')")
     public ResponseEntity createPost(@Valid @RequestBody PostRequestData postRequestData,
-                                     @RequestPart(value = "image", required = false) MultipartFile image) {
+                                     @Nullable @RequestPart(value = "image", required = false) MultipartFile image) {
+        System.out.println(postRequestData);
+        System.out.println(image);
+
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
         post.setUuid(isNull(postRequestData.getUuid()) ? UUID.randomUUID() : postRequestData.getUuid());
@@ -71,6 +77,7 @@ public class PostController {
             if (nonNull(image)) {
                 post.setImage(this.amazonClient.uploadFile(image, amazonClient.getAnimalPhotoBucket()));
             }
+
             post.setStatus(postRequestData.getStatus());
             post.setType(postRequestData.getType());
             post.setAddress(postRequestData.getAddress());
@@ -78,6 +85,14 @@ public class PostController {
             post.setContacts(postRequestData.getContacts());
             post.setUser(user);
             post.setReward(postRequestData.getReward());
+
+            if (nonNull(postRequestData.getLatitude()) && nonNull(postRequestData.getLongitude())) {
+                GeographicalLocation location = new GeographicalLocation();
+                location.setLatitude(postRequestData.getLatitude());
+                location.setLongitude(postRequestData.getLongitude());
+                post.setGeographicalLocation(location);
+            }
+
             post.setDetails(postRequestData.getDetails());
             post.setAge(postRequestData.getAge());
             post.setBreed(postRequestData.getBreed());
@@ -190,8 +205,7 @@ public class PostController {
 
     //done
     @PutMapping(value = "/editPost", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE
+            MediaType.ALL_VALUE
     })
     @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
     public ResponseEntity editPost(@Valid @RequestBody PostRequestData postRequestData,
@@ -203,6 +217,7 @@ public class PostController {
             Optional<Post> optionalPost = postRepo.findByUuid(postRequestData.getUuid());
             if (optionalPost.isPresent()) {
                 Post post = optionalPost.get();
+
                 System.out.println("User id" + user.getId());
                 System.out.println("Author" + postRequestData.getAuthorId());
                 if (user.getId().equals(postRequestData.getAuthorId()) || isAdmin(user)) {
@@ -216,6 +231,14 @@ public class PostController {
                     post.setAddress(postRequestData.getAddress());
                     post.setContacts(postRequestData.getContacts());
                     post.setReward(postRequestData.getReward());
+
+                    if (nonNull(postRequestData.getLatitude()) && nonNull(postRequestData.getLongitude())) {
+                        GeographicalLocation location = new GeographicalLocation();
+                        location.setLatitude(postRequestData.getLatitude());
+                        location.setLongitude(postRequestData.getLongitude());
+                        post.setGeographicalLocation(location);
+                    }
+
                     post.setDetails(postRequestData.getDetails());
                     post.setAge(postRequestData.getAge());
                     post.setBreed(postRequestData.getBreed());
@@ -246,6 +269,7 @@ public class PostController {
 
     //done
     @DeleteMapping("/deletePost")
+    @ApiOperation(value = "asd", consumes = "multipart/form-data, application/json")
 //    @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
     public ResponseEntity deletePost(@RequestParam(name = "uuid") UUID postUuid) {
         User user = userRepository.getOne(getAuthenticatedUserId());
@@ -290,6 +314,7 @@ public class PostController {
 
     private PostResponse getPostResponse(Post post) {
         List<MatchedPostDto> matchedPosts = matcherService.getMatchedPosts(post);
-        return new PostResponse(post, matchedPosts);
+        List<NearPostDto> nearPosts = postsService.getNearPosts(post);
+        return new PostResponse(post, matchedPosts, nearPosts);
     }
 }

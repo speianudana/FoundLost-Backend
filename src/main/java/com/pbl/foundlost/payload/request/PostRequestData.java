@@ -3,6 +3,7 @@ package com.pbl.foundlost.payload.request;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,7 +19,9 @@ public class PostRequestData {
     String address;
     String contacts;
     String details;
-//=======================
+    BigDecimal latitude;
+    BigDecimal longitude;
+    //=======================
     //Things, animals
     Long reward;
     //Animals

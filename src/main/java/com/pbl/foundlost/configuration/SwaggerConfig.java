@@ -25,7 +25,7 @@ public class SwaggerConfig {
                 .description("access_token")
                 .required(false)
                 .in("header")
-                .accepts(singleton(MediaType.APPLICATION_JSON))
+                .accepts(singleton(MediaType.ALL))
                 .build();
         return tokenBuilder.build();
     }

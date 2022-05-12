@@ -87,6 +87,9 @@ public class Post {
     @JsonProperty("details")
     String details;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private GeographicalLocation geographicalLocation;
+
     @ManyToOne
     @JoinColumn(name = "author_id", columnDefinition = "bigint")
     private User user;
