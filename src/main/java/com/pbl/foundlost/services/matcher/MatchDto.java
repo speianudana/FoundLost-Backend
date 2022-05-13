@@ -1,14 +1,14 @@
 package com.pbl.foundlost.services.matcher;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+import lombok.Data;
 
 import java.util.UUID;
 
-@Value
+@Data
 public class MatchDto {
     @JsonProperty("matched_post_uuid")
-    UUID matchedPostUuid;
+    private final UUID matchedPostUuid;
     @JsonProperty("number_intersected_keywords")
-    Integer numberIntersectedKeywords;
+    private final Integer numberIntersectedKeywords;
 }

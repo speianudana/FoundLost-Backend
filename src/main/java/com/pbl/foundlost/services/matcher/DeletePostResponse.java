@@ -1,8 +1,8 @@
 package com.pbl.foundlost.services.matcher;
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class DeletePostResponse {
     String message;
 }

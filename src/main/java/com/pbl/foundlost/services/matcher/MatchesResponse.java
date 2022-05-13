@@ -1,16 +1,16 @@
 package com.pbl.foundlost.services.matcher;
 
-import lombok.Value;
+import lombok.Data;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
 
-@Value
+@Data
 public class MatchesResponse {
-    String status;
+    private final String status;
     @NonNull
-    List<MatchDto> matches;
+    private final List<MatchDto> matches;
     @Nullable
-    String message;
+    private final String message;
 }

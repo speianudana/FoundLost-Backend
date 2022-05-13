@@ -114,6 +114,7 @@ public class PostController {
 
             return ResponseEntity.ok(new MessageResponse("Post created successfully!"));
         } catch (Exception ex) {
+            ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
