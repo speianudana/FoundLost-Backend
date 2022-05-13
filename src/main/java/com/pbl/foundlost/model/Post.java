@@ -81,7 +81,7 @@ public class Post {
     String contacts;
 
     @Column(name = "reward")
-    Long reward;
+    String reward;
 
     @Column(name = "details")
     @JsonProperty("details")
