@@ -24,7 +24,7 @@ public class PostRequestData {
     BigDecimal longitude;
     //=======================
     //Things, animals
-    Long reward;
+    String reward;
     //Animals
     String breed;
     String furColor;
