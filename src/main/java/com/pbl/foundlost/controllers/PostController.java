@@ -20,7 +20,6 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,20 +61,19 @@ public class PostController {
      **/
 
     //done
-    @PostMapping(value = "/createPost")
-    @ApiOperation(value = "asd", consumes = "multipart/form-data, application/json")
+    @PostMapping(value = "/createPost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 //    @PreAuthorize("hasRole('REG_USER') or hasRole('ADMIN')")
-    public ResponseEntity createPost(@Valid @RequestBody PostRequestData postRequestData,
-                                     @Nullable @RequestPart(value = "image", required = false) MultipartFile image) {
-        System.out.println(postRequestData);
-        System.out.println(image);
-
+    public ResponseEntity createPost(@Valid @ModelAttribute PostRequestData postRequestData) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         Post post = new Post();
         post.setUuid(isNull(postRequestData.getUuid()) ? UUID.randomUUID() : postRequestData.getUuid());
         try {
+            MultipartFile image = postRequestData.getImage();
+            System.out.println(image);
             if (nonNull(image)) {
-                post.setImage(this.amazonClient.uploadFile(image, amazonClient.getAnimalPhotoBucket()));
+                String imgUrl = this.amazonClient.uploadFile(image, amazonClient.getAnimalPhotoBucket());
+                System.out.println(imgUrl);
+                post.setImage(imgUrl);
             }
 
             post.setStatus(postRequestData.getStatus());
@@ -204,12 +202,9 @@ public class PostController {
     }
 
     //done
-    @PutMapping(value = "/editPost", consumes = {
-            MediaType.ALL_VALUE
-    })
+    @PutMapping(value = "/editPost", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('REG_USER')or hasRole('ADMIN')")
-    public ResponseEntity editPost(@Valid @RequestBody PostRequestData postRequestData,
-                                   @RequestPart(name = "image", required = false) MultipartFile image) {
+    public ResponseEntity editPost(@Valid @ModelAttribute PostRequestData postRequestData) {
         User user = userRepository.getOne(getAuthenticatedUserId());
         System.out.println(isAdmin(user));
 
@@ -221,7 +216,7 @@ public class PostController {
                 System.out.println("User id" + user.getId());
                 System.out.println("Author" + postRequestData.getAuthorId());
                 if (user.getId().equals(postRequestData.getAuthorId()) || isAdmin(user)) {
-                    System.out.println(image);
+                    MultipartFile image = postRequestData.getImage();
                     if (image != null) {
                         String filePath = this.amazonClient.uploadFile(image, amazonClient.getAnimalPhotoBucket());
                         post.setImage(filePath);

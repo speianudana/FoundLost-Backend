@@ -11,6 +11,7 @@ import java.util.UUID;
 public class PostRequestData {
     //All
     Long id;
+    MultipartFile image;
     UUID uuid;
     Long authorId;
     String status;
