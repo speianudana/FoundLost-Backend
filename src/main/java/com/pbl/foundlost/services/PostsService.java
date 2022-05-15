@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 public class PostsService {
-    private final BigDecimal RANGE = TEN;
+    private final BigDecimal RANGE = new BigDecimal("0.002");
 
     private final PostRepository postRepository;
 
