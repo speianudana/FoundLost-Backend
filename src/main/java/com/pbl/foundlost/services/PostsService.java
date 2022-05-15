@@ -48,7 +48,7 @@ public class PostsService {
     }
 
     private BigDecimal getDistance(Post post, Post candidate) {
-        MathContext mc = new MathContext(10);
+        MathContext mc = new MathContext(14);
         GeographicalLocation currentPostPosition = post.getGeographicalLocation();
 
         GeographicalLocation candidatePosition = candidate.getGeographicalLocation();
