@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -47,12 +48,12 @@ public class MatcherService {
                 .getMatches()
                 .stream()
                 .map(match -> new MatchedPostDto(match.getMatchedPostUuid(), match.getNumberIntersectedKeywords(), getPost(match)))
+                .filter(matchedPostDto -> nonNull(matchedPostDto.getPost()))
                 .collect(toList());
     }
 
     private Post getPost(MatchDto match) {
-        return postRepository.findByUuid(match.getMatchedPostUuid())
-                .orElseThrow(() -> new RuntimeException("Matched post not found"));
+        return postRepository.findByUuid(match.getMatchedPostUuid()).orElse(null);
     }
 
     public void deletePost(Post post) {
