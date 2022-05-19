@@ -1,7 +1,6 @@
 package com.pbl.foundlost.services.matcher;
 
 import com.pbl.foundlost.model.Post;
-import com.pbl.foundlost.payload.dto.MatchedPostDto;
 import com.pbl.foundlost.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -10,12 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +30,7 @@ public class MatcherService {
                 .orElseThrow(() -> new RuntimeException("Null response from matcher"));
     }
 
-    public List<MatchedPostDto> getMatchedPosts(Post post) {
+    public MatchesResponse getMatchedPosts(Post post) {
         ResponseEntity<MatchesResponse> response = restTemplate.exchange(
                 "http://lostfound-matcher:5000/api/v1/posts/" + post.getUuid() + "/matches",
                 HttpMethod.GET,
@@ -44,16 +39,7 @@ public class MatcherService {
         );
 
         return ofNullable(response.getBody())
-                .orElseThrow(() -> new RuntimeException("Null response from matcher"))
-                .getMatches()
-                .stream()
-                .map(match -> new MatchedPostDto(match.getMatchedPostUuid(), match.getNumberIntersectedKeywords(), getPost(match)))
-                .filter(matchedPostDto -> nonNull(matchedPostDto.getPost()))
-                .collect(toList());
-    }
-
-    private Post getPost(MatchDto match) {
-        return postRepository.findByUuid(match.getMatchedPostUuid()).orElse(null);
+                .orElseThrow(() -> new RuntimeException("Null response from matcher"));
     }
 
     public void deletePost(Post post) {

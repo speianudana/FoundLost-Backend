@@ -13,7 +13,9 @@ import com.pbl.foundlost.repository.UserRepository;
 import com.pbl.foundlost.services.AmazonClient;
 import com.pbl.foundlost.services.PostsService;
 import com.pbl.foundlost.services.matcher.CreatePostResponse;
+import com.pbl.foundlost.services.matcher.MatchDto;
 import com.pbl.foundlost.services.matcher.MatcherService;
+import com.pbl.foundlost.services.matcher.MatchesResponse;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -309,7 +312,16 @@ public class PostController {
     }
 
     private PostResponse getPostResponse(Post post) {
-        List<MatchedPostDto> matchedPosts = matcherService.getMatchedPosts(post);
+        MatchesResponse matchesResponse = matcherService.getMatchedPosts(post);
+        List<MatchedPostDto> matchedPosts = matchesResponse
+                .getMatches()
+                .stream()
+                .map(match -> new MatchedPostDto(match.getMatchedPostUuid(), match.getNumberIntersectedKeywords(), postsService.getPost(match)))
+                .filter(matchedPostDto -> nonNull(matchedPostDto.getPost()))
+                .collect(toList());
+
+        post.setStatus(matchesResponse.getStatus());
+        System.out.println(post.getStatus());
         List<NearPostDto> nearPosts = postsService.getNearPosts(post);
         return new PostResponse(post, matchedPosts, nearPosts);
     }

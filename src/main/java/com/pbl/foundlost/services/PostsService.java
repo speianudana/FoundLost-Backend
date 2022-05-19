@@ -4,6 +4,7 @@ import com.pbl.foundlost.model.GeographicalLocation;
 import com.pbl.foundlost.model.Post;
 import com.pbl.foundlost.payload.dto.NearPostDto;
 import com.pbl.foundlost.repository.PostRepository;
+import com.pbl.foundlost.services.matcher.MatchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class PostsService {
     private final BigDecimal RANGE = new BigDecimal("0.002");
 
     private final PostRepository postRepository;
+
+    public Post getPost(MatchDto match) {
+        return postRepository.findByUuid(match.getMatchedPostUuid()).orElse(null);
+    }
 
     public List<NearPostDto> getNearPosts(Post post) {
         if (isNull(post.getGeographicalLocation())) {
