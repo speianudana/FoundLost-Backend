@@ -14,7 +14,6 @@ import java.math.MathContext;
 import java.util.List;
 import java.util.Objects;
 
-import static java.math.BigDecimal.TEN;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
@@ -47,7 +46,7 @@ public class PostsService {
     private NearPostDto mapIfInRange(Post post, Post candidate) {
         BigDecimal distance = getDistance(post, candidate);
         if (distance.compareTo(RANGE) <= 0) {
-            return new NearPostDto(post, distance);
+            return new NearPostDto(candidate, distance);
         }
         return null;
     }
